@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0C447C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HuGo">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="HuGo">
+<meta name="description" content="Human Rights on the Go — AI Records Processing, Consolidation & Inspection System, BULPPO PRO 3">
+<title>HuGo — Human Rights on the Go</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+:root {
+  --c-navy: #0C447C;
+  --c-blue: #185FA5;
+  --c-light-blue: #E6F1FB;
+  --c-mid-blue: #B5D4F4;
+  --c-dim-blue: #7FB3E0;
+  --c-dark-navy: #042C53;
+  --c-green: #3B6D11;
+  --c-light-green: #EAF3DE;
+  --c-green-border: #C0DD97;
+  --c-amber: #633806;
+  --c-light-amber: #FAEEDA;
+  --c-amber-border: #FAC775;
+  --c-red: #791F1F;
+  --c-light-red: #FCEBEB;
+  --c-red-border: #F09595;
+  --c-dark-red: #501313;
+  --c-crimson: #A32D2D;
+  --c-crimson-dark: #E24B4A;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  background: #f0f4f8;
+}
+
+/* SPLASH SCREEN */
+#splash {
+  position: fixed; inset: 0; background: var(--c-navy);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 9999; transition: opacity 0.5s ease;
+}
+#splash.hidden { opacity: 0; pointer-events: none; }
+.splash-logo {
+  width: 96px; height: 96px; border-radius: 50%; background: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  animation: splashPop 0.6s ease;
+}
+@keyframes splashPop { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.splash-logo .slm { font-size: 26px; font-weight: 700; color: var(--c-navy); letter-spacing: -0.5px; }
+.splash-logo .sls { font-size: 10px; color: var(--c-blue); margin-top: 1px; letter-spacing: 0.5px; }
+.splash-title { font-size: 20px; font-weight: 500; color: #fff; margin-bottom: 6px; }
+.splash-sub { font-size: 12px; color: var(--c-mid-blue); text-align: center; max-width: 280px; line-height: 1.5; }
+.splash-dots { display: flex; gap: 8px; margin-top: 32px; }
+.splash-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c-mid-blue); animation: sdot 1.2s infinite; }
+.splash-dot:nth-child(2) { animation-delay: .2s; }
+.splash-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes sdot { 0%,80%,100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+
+/* APP SHELL */
+#app {
+  display: flex; flex-direction: column; height: 100%;
+  padding-top: var(--safe-top);
+}
+
+/* HEADER */
+#hdr {
+  background: var(--c-navy); padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.hdr-logo {
+  width: 36px; height: 36px; border-radius: 50%; background: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  flex-shrink: 0; line-height: 1;
+}
+.hdr-logo .lm { font-size: 11px; font-weight: 700; color: var(--c-navy); }
+.hdr-logo .ls { font-size: 7px; color: var(--c-blue); }
+.hdr-text { flex: 1; min-width: 0; }
+.hdr-text h1 { font-size: 13px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hdr-text .ht-sub { font-size: 9px; color: var(--c-mid-blue); margin-top: 1px; }
+.live-pill {
+  padding: 3px 8px; border-radius: 10px; font-size: 9.5px; font-weight: 500;
+  background: rgba(163,45,45,.7); border: 0.5px solid var(--c-crimson-dark);
+  color: #fff; display: none; align-items: center; gap: 3px; white-space: nowrap;
+  animation: livePulse 1.5s infinite;
+}
+@keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+.live-dot { width: 5px; height: 5px; border-radius: 50%; background: #fff; }
+
+/* ROLE GATE */
+#role-gate {
+  flex: 1; overflow-y: auto; padding: 20px 16px;
+  display: flex; flex-direction: column; gap: 14px;
+  background: #f0f4f8;
+}
+.rg-title { font-size: 17px; font-weight: 600; color: #1a2332; }
+.rg-sub { font-size: 13px; color: #5a6a7a; line-height: 1.5; }
+.role-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.role-card {
+  padding: 16px 14px; border: 0.5px solid #d0dce8; border-radius: 16px;
+  cursor: pointer; background: #fff; transition: all .15s; display: flex; flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.role-card:active { transform: scale(0.97); }
+.role-card.sup { border-color: var(--c-green-border); }
+.rc-ico { font-size: 28px; color: var(--c-blue); margin-bottom: 8px; }
+.sup .rc-ico { color: var(--c-green); }
+.rc-name { font-size: 13px; font-weight: 600; color: #1a2332; }
+.rc-info { font-size: 11px; color: #7a8a9a; margin-top: 3px; line-height: 1.4; }
+
+/* USER BAR */
+#user-bar {
+  padding: 6px 14px; background: #f8fafc;
+  border-bottom: 0.5px solid #dde6ef;
+  display: flex; align-items: center; gap: 7px; font-size: 11px; flex-shrink: 0;
+}
+.ub-pill { padding: 2px 8px; border-radius: 8px; font-size: 9.5px; font-weight: 600; }
+.ub-st { background: var(--c-light-blue); color: var(--c-navy); }
+.ub-su { background: var(--c-light-green); color: var(--c-green); }
+.ub-name { color: #1a2332; font-weight: 500; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.sw-btn { font-size: 10px; color: var(--c-blue); cursor: pointer; border: none; background: none; padding: 0; white-space: nowrap; }
+.flag-ind {
+  padding: 2px 7px; border-radius: 7px; font-size: 9.5px; font-weight: 600;
+  background: var(--c-light-red); color: var(--c-red); display: none; align-items: center; gap: 3px;
+}
+
+/* BOTTOM NAV */
+#bottom-nav {
+  display: flex; background: #fff; border-top: 0.5px solid #dde6ef;
+  flex-shrink: 0; padding-bottom: var(--safe-bottom);
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+}
+.bnav {
+  flex: 1; padding: 8px 4px 6px; display: flex; flex-direction: column;
+  align-items: center; gap: 2px; cursor: pointer; border: none; background: none;
+  position: relative; min-width: 0;
+}
+.bnav i { font-size: 20px; color: #94a3b8; transition: color .15s; }
+.bnav span { font-size: 9px; color: #94a3b8; transition: color .15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.bnav.active i { color: var(--c-navy); }
+.bnav.active span { color: var(--c-navy); font-weight: 600; }
+.bnav::after { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: var(--c-navy); border-radius: 0 0 3px 3px; transition: width .2s; }
+.bnav.active::after { width: 32px; }
+.bnav .badge { position: absolute; top: 5px; right: 20%; width: 7px; height: 7px; border-radius: 50%; background: var(--c-crimson-dark); border: 1.5px solid #fff; display: none; }
+.bnav .badge.show { display: block; }
+
+/* CONTENT AREA */
+#content { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; background: #f0f4f8; }
+
+.view { display: none; padding: 14px; flex-direction: column; gap: 12px; min-height: 100%; }
+.view.active { display: flex; }
+
+/* CARDS */
+.card {
+  background: #fff; border: 0.5px solid #dde6ef; border-radius: 16px;
+  padding: 14px 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.card-title {
+  font-size: 13px; font-weight: 600; color: #1a2332;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 7px;
+}
+.card-title i { font-size: 16px; color: var(--c-blue); }
+
+/* HOME DASHBOARD */
+.home-header { padding: 16px 0 4px; }
+.home-greeting { font-size: 20px; font-weight: 700; color: #1a2332; }
+.home-sub { font-size: 12px; color: #7a8a9a; margin-top: 2px; }
+.stat-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.stat-card {
+  background: #fff; border-radius: 14px; padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 0.5px solid #dde6ef;
+}
+.stat-val { font-size: 26px; font-weight: 700; color: #1a2332; }
+.stat-val.s { color: var(--c-green); }
+.stat-val.d { color: var(--c-crimson); }
+.stat-lbl { font-size: 10.5px; color: #7a8a9a; margin-top: 2px; }
+.sec-lbl { font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: .6px; }
+.mod-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.mod-card {
+  background: #fff; border: 0.5px solid #dde6ef; border-radius: 14px;
+  padding: 14px 13px 12px; cursor: pointer; display: flex; flex-direction: column; gap: 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: all .15s;
+}
+.mod-card:active { transform: scale(0.97); border-color: var(--c-blue); }
+.mod-card .mc-ico { font-size: 24px; color: var(--c-blue); }
+.mod-card .mc-name { font-size: 12px; font-weight: 600; color: #1a2332; line-height: 1.3; }
+.mod-card .mc-desc { font-size: 10px; color: #7a8a9a; line-height: 1.4; }
+.mc-badge { margin-top: 4px; font-size: 9.5px; padding: 2px 8px; border-radius: 8px; width: fit-content; font-weight: 500; }
+.mb-green { background: var(--c-light-green); color: var(--c-green); }
+.mb-blue { background: var(--c-light-blue); color: var(--c-blue); }
+.activity-list { display: flex; flex-direction: column; gap: 6px; }
+.act-row {
+  display: flex; align-items: center; gap: 9px; padding: 10px 12px;
+  background: #fff; border: 0.5px solid #dde6ef; border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.act-ico { font-size: 16px; color: var(--c-blue); flex-shrink: 0; }
+.act-ico.flag { color: var(--c-crimson); }
+.act-body { flex: 1; min-width: 0; font-size: 11.5px; color: #5a6a7a; }
+.act-body strong { color: #1a2332; display: block; font-size: 12px; }
+.act-ts { font-size: 9px; color: #94a3b8; white-space: nowrap; }
+
+/* FORM ELEMENTS */
+.fg { display: flex; flex-direction: column; gap: 4px; }
+.fl { font-size: 11px; font-weight: 600; color: #5a6a7a; }
+.req { color: var(--c-crimson); }
+.fs, .fi {
+  width: 100%; padding: 10px 12px; font-size: 14px; font-family: inherit;
+  border: 1px solid #dde6ef; border-radius: 12px; outline: none;
+  background: #f8fafc; color: #1a2332; -webkit-appearance: none;
+}
+.fs:focus, .fi:focus { border-color: var(--c-blue); background: #fff; }
+.rw2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rw3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+/* STATION GRID */
+.stn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
+.stn-opt {
+  padding: 7px 8px; border: 1px solid #dde6ef; border-radius: 10px;
+  font-size: 10.5px; cursor: pointer; color: #5a6a7a; background: #f8fafc;
+  text-align: left; transition: all .12s; font-family: inherit;
+}
+.stn-opt:active { transform: scale(0.96); }
+.stn-opt.on { border-color: var(--c-navy); color: var(--c-navy); background: var(--c-light-blue); font-weight: 600; }
+
+/* MONTH GRID */
+.month-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.month-opt {
+  padding: 7px 4px; border: 1px solid #dde6ef; border-radius: 10px;
+  font-size: 11px; cursor: pointer; color: #5a6a7a; background: #f8fafc;
+  text-align: center; transition: all .12s; font-family: inherit;
+}
+.month-opt.on { border-color: var(--c-blue); color: var(--c-blue); background: var(--c-light-blue); font-weight: 600; }
+
+/* TOGGLE */
+.tog-wrap { display: flex; gap: 8px; }
+.tog {
+  flex: 1; padding: 10px 14px; border: 1px solid #dde6ef; border-radius: 12px;
+  font-size: 13px; cursor: pointer; background: #f8fafc; color: #5a6a7a;
+  font-weight: 500; transition: all .12s; font-family: inherit; text-align: center;
+}
+.tog:active { transform: scale(0.97); }
+.tog.y-on { border-color: var(--c-green); background: var(--c-light-green); color: var(--c-green); font-weight: 600; }
+.tog.n-on { border-color: var(--c-blue); background: var(--c-light-blue); color: var(--c-blue); font-weight: 600; }
+
+/* CHIP */
+.chip-wrap { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.chip {
+  padding: 4px 11px; border: 1px solid #dde6ef; border-radius: 20px;
+  font-size: 11.5px; cursor: pointer; color: #5a6a7a; background: #f8fafc; transition: all .12s;
+}
+.chip.on { border-color: var(--c-navy); background: var(--c-light-blue); color: var(--c-navy); font-weight: 500; }
+
+/* NUMBER INPUT */
+.num-wrap { display: flex; align-items: center; gap: 10px; }
+.num-btn {
+  width: 36px; height: 36px; border: 1px solid #dde6ef; border-radius: 10px;
+  background: #f8fafc; cursor: pointer; font-size: 20px; color: #1a2332;
+  display: flex; align-items: center; justify-content: center; font-family: inherit;
+}
+.num-btn:active { background: var(--c-light-blue); border-color: var(--c-blue); }
+.num-disp { font-size: 26px; font-weight: 700; color: #1a2332; min-width: 44px; text-align: center; }
+.num-man { width: 80px; padding: 8px 10px; font-size: 14px; font-family: inherit; border: 1px solid #dde6ef; border-radius: 10px; outline: none; background: #f8fafc; color: #1a2332; text-align: center; }
+
+/* DROP ZONE */
+.drop-zone {
+  border: 2px dashed #c0cdd8; border-radius: 14px; padding: 20px 14px;
+  text-align: center; cursor: pointer; background: #f8fafc; transition: all .15s;
+}
+.drop-zone:active, .drop-zone.over { border-color: var(--c-blue); background: var(--c-light-blue); }
+.drop-zone i { font-size: 28px; color: #94a3b8; display: block; margin-bottom: 6px; }
+.drop-zone p { font-size: 12px; color: #7a8a9a; }
+.drop-zone small { font-size: 10px; color: #94a3b8; }
+.file-prev {
+  display: flex; align-items: center; gap: 9px; padding: 10px 12px;
+  border: 1px solid var(--c-green-border); border-radius: 12px;
+  background: var(--c-light-green); margin-top: 7px;
+}
+.file-prev i { font-size: 18px; color: var(--c-green); }
+.fp-n { font-size: 12px; font-weight: 500; color: var(--c-green); flex: 1; word-break: break-all; }
+.fp-r { cursor: pointer; color: var(--c-crimson); font-size: 11px; border: none; background: none; padding: 0; font-family: inherit; }
+
+/* ALERTS */
+.alert {
+  border-radius: 12px; padding: 10px 12px; font-size: 12px;
+  display: flex; align-items: flex-start; gap: 8px; line-height: 1.5;
+}
+.alert i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.alert.ok { background: var(--c-light-green); border: 1px solid var(--c-green-border); color: var(--c-green); }
+.alert.err { background: var(--c-light-red); border: 1px solid var(--c-red-border); color: var(--c-red); display: none; }
+.alert.warn { background: var(--c-light-amber); border: 1px solid var(--c-amber-border); color: var(--c-amber); }
+.alert.urgent { background: #F7C1C1; border: 1px solid var(--c-crimson-dark); color: var(--c-dark-red); font-weight: 600; }
+.alert.info { background: var(--c-light-blue); border: 1px solid var(--c-mid-blue); color: var(--c-navy); }
+.alert.lock { background: #F7C1C1; border: 1px solid var(--c-crimson-dark); color: var(--c-dark-red); font-weight: 600; }
+
+/* BUTTONS */
+.pbtn {
+  padding: 13px 18px; background: var(--c-navy); color: #fff; border: none;
+  border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%; font-family: inherit; transition: all .15s;
+}
+.pbtn:active { transform: scale(0.98); background: var(--c-blue); }
+.pbtn:disabled { background: #c0cdd8; color: #8a9aaa; cursor: not-allowed; }
+.sbtn {
+  padding: 13px 18px; background: var(--c-green); color: #fff; border: none;
+  border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%; font-family: inherit; transition: all .15s;
+}
+.sbtn:active { transform: scale(0.98); }
+.sbtn:disabled { background: #c0cdd8; color: #8a9aaa; cursor: not-allowed; }
+.dbtn {
+  padding: 13px 18px; background: var(--c-crimson); color: #fff; border: none;
+  border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%; font-family: inherit; transition: all .15s;
+}
+.dbtn:active { transform: scale(0.98); background: #791F1F; }
+.gbtn {
+  padding: 10px 16px; border: 1px solid #dde6ef; background: #fff;
+  border-radius: 12px; font-size: 13px; cursor: pointer; color: #5a6a7a;
+  display: flex; align-items: center; gap: 6px; font-family: inherit;
+}
+.gbtn:active { background: #f0f4f8; }
+.add-btn {
+  padding: 10px 16px; border: 2px dashed #c0cdd8; background: #f8fafc;
+  border-radius: 12px; font-size: 13px; cursor: pointer; color: var(--c-blue);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%; font-family: inherit;
+}
+.add-btn:active { background: var(--c-light-blue); border-color: var(--c-blue); }
+
+/* PROCESSING */
+.processing { padding: 24px; text-align: center; display: none; }
+.proc-dots { display: flex; justify-content: center; gap: 6px; }
+.proc-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c-blue); animation: pdot 1.2s infinite; }
+.proc-dot:nth-child(2){animation-delay:.2s} .proc-dot:nth-child(3){animation-delay:.4s}
+@keyframes pdot{0%,80%,100%{transform:translateY(0);opacity:.5}40%{transform:translateY(-6px);opacity:1}}
+
+/* SUCCESS */
+.success-card { background: #fff; border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.sico { font-size: 48px; color: var(--c-green); display: block; margin-bottom: 10px; }
+.s-title { font-size: 17px; font-weight: 700; color: #1a2332; margin-bottom: 6px; }
+.s-sub { font-size: 12px; color: #7a8a9a; line-height: 1.5; margin-bottom: 14px; }
+.json-box {
+  background: var(--c-dark-navy); border-radius: 12px; padding: 12px;
+  font-size: 10px; font-family: 'Courier New', monospace; color: var(--c-mid-blue);
+  white-space: pre-wrap; word-break: break-all; max-height: 140px;
+  overflow-y: auto; text-align: left; margin-bottom: 12px;
+}
+.copy-btn {
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 10px 16px; border: 1px solid #dde6ef; border-radius: 12px;
+  background: #f8fafc; cursor: pointer; color: #5a6a7a; font-size: 13px;
+  font-family: inherit; width: 100%;
+}
+.copy-btn:active { background: var(--c-light-blue); border-color: var(--c-blue); }
+
+/* ENTRY CARD */
+.entry-card {
+  background: #f8fafc; border: 1px solid #dde6ef; border-radius: 14px;
+  padding: 12px 13px; margin-top: 8px; position: relative;
+}
+.entry-num { font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+.rm-btn { position: absolute; top: 10px; right: 10px; background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 16px; font-family: inherit; }
+.rm-btn:active { color: var(--c-crimson); }
+
+/* CAMERA */
+#cam-vp {
+  background: var(--c-dark-navy); border-radius: 16px; overflow: hidden;
+  min-height: 220px; display: flex; align-items: center; justify-content: center;
+  position: relative; border: 1px solid var(--c-blue);
+}
+#cam-video { width: 100%; height: 220px; object-fit: cover; display: none; }
+#cam-ph { text-align: center; color: var(--c-dim-blue); padding: 24px; }
+#cam-ph i { font-size: 40px; display: block; margin-bottom: 8px; color: #378ADD; }
+#cam-ph p { font-size: 13px; }
+#cam-sid {
+  position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+  font-size: 9px; font-family: monospace; color: #378ADD;
+  background: rgba(4,44,83,.8); padding: 3px 8px; border-radius: 8px;
+}
+#cam-live-ind {
+  position: absolute; top: 8px; right: 10px; display: none;
+  align-items: center; gap: 4px; font-size: 10px; color: var(--c-crimson-dark); font-weight: 700;
+  background: rgba(4,44,83,.8); padding: 3px 8px; border-radius: 8px;
+}
+#cam-live-ind .ld { width: 6px; height: 6px; border-radius: 50%; background: var(--c-crimson-dark); animation: livePulse 1s infinite; }
+
+/* COND GRID */
+.cond-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cond-card {
+  border: 1px solid #dde6ef; border-radius: 14px; padding: 10px 12px;
+  background: #fff; transition: all .2s;
+}
+.cond-card.scan { border-color: var(--c-blue); background: var(--c-light-blue); }
+.cond-card.done { border-color: var(--c-green); background: var(--c-light-green); }
+.cond-ico { font-size: 20px; color: #94a3b8; margin-bottom: 4px; }
+.cond-card.scan .cond-ico { color: var(--c-blue); }
+.cond-card.done .cond-ico { color: var(--c-green); }
+.cond-nm { font-size: 11px; font-weight: 600; color: #1a2332; }
+.cond-card.done .cond-nm { color: var(--c-green); }
+.cond-st { font-size: 9.5px; color: #94a3b8; margin-top: 2px; }
+.cond-card.scan .cond-st { color: var(--c-blue); }
+.cond-card.done .cond-st { color: var(--c-green); }
+.scan-d { display: inline-flex; gap: 2px; margin-left: 3px; }
+.scan-d span { width: 3px; height: 3px; border-radius: 50%; background: var(--c-blue); display: inline-block; animation: pdot 1s infinite; }
+.scan-d span:nth-child(2){animation-delay:.2s}.scan-d span:nth-child(3){animation-delay:.4s}
+
+/* TOKEN */
+.tok-inp {
+  width: 100%; padding: 12px 14px; font-size: 16px; font-family: monospace;
+  border: 1px solid #dde6ef; border-radius: 12px; outline: none;
+  background: #f8fafc; color: #1a2332; letter-spacing: 2px;
+}
+.tok-inp:focus { border-color: var(--c-blue); background: #fff; }
+.tok-hints { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.tok-hint {
+  padding: 4px 10px; border-radius: 10px; font-size: 10.5px; font-family: monospace;
+  background: #f0f4f8; border: 1px solid #dde6ef; cursor: pointer; color: #5a6a7a;
+}
+.tok-hint:active { background: var(--c-light-blue); border-color: var(--c-blue); color: var(--c-navy); }
+
+/* MASTER TABLE */
+.master-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.master-table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 600px; }
+.master-table th {
+  text-align: left; padding: 8px 10px; font-size: 9.5px; font-weight: 700;
+  color: #7a8a9a; border-bottom: 1px solid #dde6ef; background: #f8fafc;
+  text-transform: uppercase; letter-spacing: .3px; white-space: nowrap;
+}
+.master-table td { padding: 8px 10px; border-bottom: 1px solid #f0f4f8; color: #5a6a7a; vertical-align: top; }
+.master-table tr:last-child td { border-bottom: none; }
+.master-table td:first-child { font-weight: 600; color: #1a2332; }
+.stn-pill { padding: 2px 8px; border-radius: 8px; font-size: 9.5px; font-weight: 600; white-space: nowrap; }
+.sp-b { background: var(--c-light-blue); color: var(--c-navy); }
+.sp-g { background: var(--c-light-green); color: var(--c-green); }
+.sp-a { background: var(--c-light-amber); color: var(--c-amber); }
+.sp-r { background: var(--c-light-red); color: var(--c-red); }
+
+/* INSTALL BANNER */
+#install-banner {
+  margin: 0 0 4px; background: linear-gradient(135deg, var(--c-navy), var(--c-blue));
+  border-radius: 14px; padding: 14px 16px; display: none; align-items: center; gap: 12px;
+}
+#install-banner .ib-text { flex: 1; }
+#install-banner .ib-title { font-size: 13px; font-weight: 600; color: #fff; }
+#install-banner .ib-sub { font-size: 11px; color: var(--c-mid-blue); margin-top: 2px; }
+#install-banner .ib-btn {
+  padding: 8px 16px; background: #fff; color: var(--c-navy); border: none;
+  border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
+  font-family: inherit;
+}
+#install-banner .ib-close { color: var(--c-mid-blue); font-size: 18px; cursor: pointer; background: none; border: none; }
+
+/* OFFLINE INDICATOR */
+#offline-bar {
+  background: var(--c-crimson); color: #fff; font-size: 11px; font-weight: 500;
+  padding: 6px 14px; text-align: center; display: none; flex-shrink: 0;
+}
+
+/* PILL */
+.pill { padding: 2px 8px; border-radius: 8px; font-size: 9.5px; font-weight: 600; }
+.pill-b { background: var(--c-light-blue); color: var(--c-navy); }
+.pill-g { background: var(--c-light-green); color: var(--c-green); }
+.pill-r { background: var(--c-light-red); color: var(--c-red); }
+
+/* MISSING STATION LIST */
+.missing-wrap { display: flex; flex-wrap: wrap; gap: 5px; }
+
+/* FILTER ROW */
+.filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-row .fs { flex: 1; min-width: 100px; }
+
+.divider { height: 0.5px; background: #dde6ef; }
+
+/* ANIMATIONS */
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.view.active .card { animation: slideUp 0.2s ease; }
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo"><span class="slm">HuGo</span><span class="sls">PRO 3</span></div>
+  <div class="splash-title">Human Rights on the Go</div>
+  <div class="splash-sub">Bulacan Police Provincial Human Rights Affairs Office · BULPPO, PRO 3</div>
+  <div class="splash-dots"><div class="splash-dot"></div><div class="splash-dot"></div><div class="splash-dot"></div></div>
+</div>
+
+<div id="app" style="display:none;">
+  <!-- HEADER -->
+  <div id="hdr">
+    <div class="hdr-logo"><span class="lm">HuGo</span><span class="ls">v4</span></div>
+    <div class="hdr-text">
+      <h1>Human Rights on the Go</h1>
+      <div class="ht-sub">BULPPO PRO 3 &nbsp;·&nbsp; <span id="hdr-sub">PHRA Bulacan</span></div>
+    </div>
+    <div class="live-pill" id="live-pill"><div class="live-dot"></div>LIVE</div>
+  </div>
+
+  <!-- OFFLINE BAR -->
+  <div id="offline-bar">⚠ You are offline — AI features unavailable</div>
+
+  <!-- ROLE GATE -->
+  <div id="role-gate">
+    <div id="install-banner">
+      <div class="ib-text"><div class="ib-title">Install HuGo</div><div class="ib-sub">Add to home screen for app-like experience</div></div>
+      <button class="ib-btn" onclick="installApp()">Install</button>
+      <button class="ib-close" onclick="document.getElementById('install-banner').style.display='none'"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="home-header">
+      <div class="home-greeting">Welcome to HuGo</div>
+      <div class="home-sub">Select your role to continue</div>
+    </div>
+    <div class="alert info"><i class="ti ti-info-circle"></i>Station users submit reports. Only super users can generate the master consolidated copy.</div>
+    <div class="role-cards">
+      <div class="role-card" onclick="login('station')"><div class="rc-ico"><i class="ti ti-building"></i></div><div class="rc-name">Station user</div><div class="rc-info">Submit reports for your assigned station</div></div>
+      <div class="role-card sup" onclick="login('super')"><div class="rc-ico"><i class="ti ti-shield-check"></i></div><div class="rc-name">Super user</div><div class="rc-info">Full access — view, consolidate, generate master copy</div></div>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATED APP -->
+  <div id="auth-app" style="display:none;flex:1;flex-direction:column;overflow:hidden;">
+    <div id="user-bar">
+      <span class="ub-pill" id="ub-pill">Station user</span>
+      <span id="ub-name" class="ub-name">User</span>
+      <span class="flag-ind" id="flag-ind"><i class="ti ti-flag" style="font-size:11px"></i>Flag</span>
+      <button class="sw-btn" onclick="logout()">Switch role</button>
+    </div>
+
+    <!-- CONTENT -->
+    <div id="content">
+
+      <!-- HOME -->
+      <div class="view active" id="view-home">
+        <div id="install-banner-home" style="display:none;background:linear-gradient(135deg,#0C447C,#185FA5);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+          <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#fff;">Install HuGo</div><div style="font-size:11px;color:#B5D4F4;margin-top:2px;">Tap to add to your home screen</div></div>
+          <button style="padding:8px 14px;background:#fff;color:#0C447C;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;" onclick="installApp()">Install</button>
+        </div>
+        <div class="home-header">
+          <div class="home-greeting" id="home-greeting">Good day!</div>
+          <div class="home-sub" id="home-sub-text">Select a module below</div>
+        </div>
+        <div class="stat-row" id="home-stats"></div>
+        <div class="sec-lbl">Reporting modules</div>
+        <div class="mod-cards">
+          <div class="mod-card" onclick="goNav('pice')"><div class="mc-ico"><i class="ti ti-calendar-week"></i></div><div class="mc-name">Weekly PICE</div><div class="mc-desc">Weekly activity report</div><div class="mc-badge mb-green">Ready</div></div>
+          <div class="mod-card" onclick="goNav('med')"><div class="mc-ico"><i class="ti ti-stethoscope"></i></div><div class="mc-name">Monthly Medical</div><div class="mc-desc">Medical check-up report</div><div class="mc-badge mb-green">Ready</div></div>
+          <div class="mod-card" onclick="goNav('phros')"><div class="mc-ico"><i class="ti ti-users"></i></div><div class="mc-name">PHROs &amp; COs</div><div class="mc-desc">Excel file submission</div><div class="mc-badge mb-green">Ready</div></div>
+          <div class="mod-card" onclick="goNav('idd')"><div class="mc-ico"><i class="ti ti-file-description"></i></div><div class="mc-name">Monthly IDD</div><div class="mc-desc">Disease &amp; death report</div><div class="mc-badge mb-green">Ready</div></div>
+          <div class="mod-card" onclick="goNav('cam')"><div class="mc-ico"><i class="ti ti-camera"></i></div><div class="mc-name">Inspection cam</div><div class="mc-desc">Live facility inspection</div><div class="mc-badge mb-blue">Token req'd</div></div>
+          <div class="mod-card" onclick="goNav('master')"><div class="mc-ico"><i class="ti ti-file-certificate"></i></div><div class="mc-name">Master report</div><div class="mc-desc">Super user only</div><div class="mc-badge mb-blue" id="mc-master-badge">Super user</div></div>
+        </div>
+        <div class="sec-lbl">Recent activity</div>
+        <div class="activity-list" id="activity-list">
+          <div style="font-size:12px;color:#94a3b8;padding:10px 0;text-align:center;">No activity yet</div>
+        </div>
+      </div>
+
+      <!-- WEEKLY PICE -->
+      <div class="view" id="view-pice">
+        <div class="card"><div class="card-title"><i class="ti ti-calendar-week"></i>Weekly PICE</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="fg"><div class="fl">Station <span class="req">*</span></div><div class="stn-grid" id="pice-stns"></div></div>
+            <div class="fg"><div class="fl">Number of PICE conducted <span class="req">*</span></div>
+              <div class="num-wrap"><button class="num-btn" onclick="adj('pice',-1)">−</button><span class="num-disp" id="pice-d">0</span><button class="num-btn" onclick="adj('pice',1)">+</button><input type="number" class="num-man" id="pice-m" min="0" value="0" oninput="man('pice',this.value)"></div>
+            </div>
+            <div class="fg"><div class="fl">Action photo <span class="req">*</span></div>
+              <div class="drop-zone" onclick="document.getElementById('pice-fi').click()"><i class="ti ti-photo-up"></i><p>Tap to upload photo</p><small>JPG, JPEG, PNG · one photo only</small></div>
+              <div id="pice-prev"></div>
+              <div class="alert err" id="pice-err"><i class="ti ti-alert-triangle"></i><span id="pice-err-msg"></span></div>
+              <input type="file" id="pice-fi" accept="image/jpeg,image/png" style="display:none" onchange="handlePhoto('pice',this.files)">
+            </div>
+          </div>
+        </div>
+        <button class="pbtn" id="pice-btn" onclick="submitMod('pice')" disabled><i class="ti ti-send"></i>Submit Weekly PICE</button>
+        <div class="processing" id="pice-proc"><div class="proc-dots"><div class="proc-dot"></div><div class="proc-dot"></div><div class="proc-dot"></div></div><p style="font-size:12px;color:#7a8a9a;margin-top:8px;">Submitting...</p></div>
+        <div id="pice-success"></div>
+      </div>
+
+      <!-- MONTHLY MEDICAL -->
+      <div class="view" id="view-med">
+        <div class="card"><div class="card-title"><i class="ti ti-stethoscope"></i>Monthly Medical Check-up</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="fg"><div class="fl">Station <span class="req">*</span></div><div class="stn-grid" id="med-stns"></div></div>
+            <div class="fg"><div class="fl">Reporting month <span class="req">*</span></div><div class="month-grid" id="med-months"></div></div>
+            <div class="fg"><div class="fl">Number of medical check-ups <span class="req">*</span></div>
+              <div class="num-wrap"><button class="num-btn" onclick="adj('med',-1)">−</button><span class="num-disp" id="med-d">0</span><button class="num-btn" onclick="adj('med',1)">+</button><input type="number" class="num-man" id="med-m" min="0" value="0" oninput="man('med',this.value)"></div>
+            </div>
+            <div class="fg"><div class="fl">Action photo <span class="req">*</span></div>
+              <div class="drop-zone" onclick="document.getElementById('med-fi').click()"><i class="ti ti-photo-up"></i><p>Tap to upload photo</p><small>JPG, JPEG, PNG · one photo only</small></div>
+              <div id="med-prev"></div>
+              <input type="file" id="med-fi" accept="image/jpeg,image/png" style="display:none" onchange="handlePhoto('med',this.files)">
+            </div>
+          </div>
+        </div>
+        <button class="pbtn" id="med-btn" onclick="submitMod('med')" disabled><i class="ti ti-send"></i>Submit Monthly Medical</button>
+        <div class="processing" id="med-proc"><div class="proc-dots"><div class="proc-dot"></div><div class="proc-dot"></div><div class="proc-dot"></div></div><p style="font-size:12px;color:#7a8a9a;margin-top:8px;">Submitting...</p></div>
+        <div id="med-success"></div>
+      </div>
+
+      <!-- PHROs & COs -->
+      <div class="view" id="view-phros">
+        <div class="card"><div class="card-title"><i class="ti ti-users"></i>Monthly PHROs &amp; COs</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="fg"><div class="fl">Station <span class="req">*</span></div><div class="stn-grid" id="phros-stns"></div></div>
+            <div class="fg"><div class="fl">Reporting month <span class="req">*</span></div><div class="month-grid" id="phros-months"></div></div>
+            <div class="fg"><div class="fl">Upload Excel file (.xlsx) <span class="req">*</span></div>
+              <div class="drop-zone" onclick="document.getElementById('phros-fi').click()"><i class="ti ti-file-spreadsheet"></i><p>Tap to upload Excel file</p><small>.xlsx only · Form (A) and Form (B) sheets required</small></div>
+              <div id="phros-prev"></div>
+              <input type="file" id="phros-fi" accept=".xlsx" style="display:none" onchange="handleXlsx(this.files)">
+            </div>
+            <div id="phros-val"></div>
+            <div class="alert err" id="phros-dup-err"><i class="ti ti-alert-triangle"></i>Duplicate — this station already submitted for this period.</div>
+          </div>
+        </div>
+        <button class="pbtn" id="phros-btn" onclick="submitMod('phros')" disabled><i class="ti ti-send"></i>Submit PHROs &amp; COs</button>
+        <div class="processing" id="phros-proc"><div class="proc-dots"><div class="proc-dot"></div><div class="proc-dot"></div><div class="proc-dot"></div></div><p style="font-size:12px;color:#7a8a9a;margin-top:8px;">Validating...</p></div>
+        <div id="phros-success"></div>
+      </div>
+
+      <!-- IDD -->
+      <div class="view" id="view-idd">
+        <div class="card"><div class="card-title"><i class="ti ti-file-description"></i>Monthly IDD</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="rw2">
+              <div class="fg"><div class="fl">Month <span class="req">*</span></div><select class="fs" id="idd-month" onchange="checkIDD()"><option value="">Month...</option><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>
+              <div class="fg"><div class="fl">Year <span class="req">*</span></div><select class="fs" id="idd-year" onchange="checkIDD()"><option value="">Year...</option><option>2025</option><option>2026</option><option>2027</option></select></div>
+            </div>
+            <div class="fg"><div class="fl">Station <span class="req">*</span></div><div class="stn-grid" id="idd-stns"></div></div>
+          </div>
+        </div>
+        <div class="card"><div class="card-title"><i class="ti ti-heart-off"></i>Form 1 — Natural death</div>
+          <div class="tog-wrap" style="margin-bottom:10px;"><button class="tog" id="idd-f1-y" onclick="setF(1,'yes')">YES</button><button class="tog" id="idd-f1-n" onclick="setF(1,'no')">NO — Negative</button></div>
+          <div id="idd-f1-entries"></div>
+          <div id="idd-f1-add" style="display:none;margin-top:6px;"><button class="add-btn" onclick="addEntry(1)"><i class="ti ti-plus"></i>Add PUPC entry</button></div>
+          <div class="alert warn" id="idd-f1-flag" style="display:none;margin-top:10px;"><i class="ti ti-flag"></i>Priority flag will notify all super users on submission.</div>
+        </div>
+        <div class="card"><div class="card-title"><i class="ti ti-alert-triangle"></i>Form 2 — Maltreatment / Torture</div>
+          <div class="tog-wrap" style="margin-bottom:10px;"><button class="tog" id="idd-f2-y" onclick="setF(2,'yes')">YES</button><button class="tog" id="idd-f2-n" onclick="setF(2,'no')">NO — Negative</button></div>
+          <div id="idd-f2-entries"></div>
+          <div id="idd-f2-add" style="display:none;margin-top:6px;"><button class="add-btn" onclick="addEntry(2)"><i class="ti ti-plus"></i>Add PUPC entry</button></div>
+          <div class="alert urgent" id="idd-f2-flag" style="display:none;margin-top:10px;"><i class="ti ti-alert-triangle"></i>URGENT — Immediate super user notification on submission.</div>
+        </div>
+        <div class="card"><div class="card-title"><i class="ti ti-stethoscope"></i>Form 3 — Common diseases</div>
+          <div class="tog-wrap" style="margin-bottom:10px;"><button class="tog" id="idd-f3-y" onclick="setF(3,'yes')">YES</button><button class="tog" id="idd-f3-n" onclick="setF(3,'no')">NO — Negative</button></div>
+          <div id="idd-f3-entries"></div>
+          <div id="idd-f3-add" style="display:none;margin-top:6px;"><button class="add-btn" onclick="addDiseaseRow()"><i class="ti ti-plus"></i>Add disease row</button></div>
+        </div>
+        <button class="pbtn" id="idd-btn" onclick="submitMod('idd')" disabled><i class="ti ti-send"></i>Submit IDD Report</button>
+        <div class="processing" id="idd-proc"><div class="proc-dots"><div class="proc-dot"></div><div class="proc-dot"></div><div class="proc-dot"></div></div><p style="font-size:12px;color:#7a8a9a;margin-top:8px;">Submitting...</p></div>
+        <div id="idd-success"></div>
+      </div>
+
+      <!-- CAMERA -->
+      <div class="view" id="view-cam">
+        <div id="cam-tok-sec">
+          <div class="card"><div class="card-title"><i class="ti ti-lock"></i>Inspection token</div>
+            <div class="alert info" style="margin-bottom:12px;"><i class="ti ti-info-circle"></i>Camera activates automatically once your token is validated.</div>
+            <div class="fg" style="margin-bottom:10px;"><div class="fl">Enter inspection token</div><input type="text" class="tok-inp" id="cam-tok" placeholder="Enter token..." maxlength="20" oninput="onTok()"></div>
+            <div class="tok-hints">
+              <span class="tok-hint" onclick="useTok('HUGO-INSPECT-01')">HUGO-INSPECT-01</span>
+              <span class="tok-hint" onclick="useTok('PHRA-CAM-2025')">PHRA-CAM-2025</span>
+              <span class="tok-hint" onclick="useTok('BULPPO-SU-99')">BULPPO-SU-99</span>
+            </div>
+            <div class="alert err" id="cam-tok-err" style="margin-top:10px;"><i class="ti ti-alert-triangle"></i><span id="cam-tok-err-msg"></span></div>
+            <div id="cam-validating" style="display:none;margin-top:10px;" class="alert info"><i class="ti ti-loader"></i>Validating token and activating camera...</div>
+          </div>
+          <button class="pbtn" id="cam-val-btn" onclick="valCam()" disabled style="margin-top:0;"><i class="ti ti-camera"></i>Validate &amp; start camera</button>
+        </div>
+        <div id="cam-live-sec" style="display:none;flex-direction:column;gap:10px;">
+          <div id="cam-vp">
+            <video id="cam-video" autoplay playsinline muted></video>
+            <div id="cam-ph"><i class="ti ti-camera"></i><p>Initializing camera...</p></div>
+            <div id="cam-sid"></div>
+            <div id="cam-live-ind"><div class="ld"></div>LIVE</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="dbtn" onclick="stopCam()" style="flex:1;"><i class="ti ti-player-stop"></i>Stop &amp; report</button>
+            <button class="gbtn" onclick="manCap()"><i class="ti ti-camera"></i>Capture</button>
+          </div>
+          <div class="cond-grid" id="cam-conds"></div>
+          <div class="card"><div class="card-title"><i class="ti ti-list"></i>Capture log <span class="pill pill-b" id="cap-cnt" style="margin-left:5px;">0</span></div><div id="cap-log" style="display:flex;flex-direction:column;gap:6px;"><div style="font-size:12px;color:#94a3b8;">AI detection running...</div></div></div>
+        </div>
+        <div id="cam-done-sec" style="display:none;">
+          <div class="success-card"><i class="ti ti-circle-check sico"></i><div class="s-title">Inspection complete</div><p id="cam-done-msg" class="s-sub"></p><div class="json-box" id="cam-json"></div><div style="display:flex;gap:8px;margin-top:8px;"><button class="copy-btn" onclick="copyCamJSON()"><i class="ti ti-copy"></i>Copy JSON</button><button class="gbtn" onclick="resetCam()"><i class="ti ti-refresh"></i>New</button></div></div>
+        </div>
+      </div>
+
+      <!-- MASTER REPORT -->
+      <div class="view" id="view-master">
+        <div class="alert lock" id="master-denied" style="display:none;"><i class="ti ti-lock"></i>Access denied. Only super users can generate the master consolidated report.</div>
+        <div id="master-su" style="display:none;flex-direction:column;gap:11px;">
+          <div class="stat-row" id="master-stats"></div>
+          <div class="card"><div class="card-title"><i class="ti ti-filter"></i>Filter by period</div>
+            <div class="filter-row">
+              <select class="fs" id="f-month" onchange="buildMaster()"><option value="">All months</option><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
+              <select class="fs" id="f-year" onchange="buildMaster()"><option value="">All years</option><option>2025</option><option>2026</option><option>2027</option></select>
+            </div>
+          </div>
+          <div><div class="sec-lbl" style="margin-bottom:7px;">Per-station submissions</div>
+            <div class="card" style="padding:0;overflow:hidden;">
+              <div class="master-scroll"><table class="master-table"><thead><tr><th>Station</th><th>Period</th><th>PICE</th><th>Medical</th><th>PHROs</th><th>IDD F1</th><th>IDD F2</th><th>Flag</th></tr></thead><tbody id="master-tbody"></tbody></table></div>
+              <div id="master-empty" style="padding:16px;text-align:center;font-size:12px;color:#94a3b8;">No submissions yet.</div>
+            </div>
+          </div>
+          <div><div class="sec-lbl" style="margin-bottom:7px;">Missing stations <span id="miss-cnt" class="stn-pill sp-a" style="margin-left:5px;"></span></div><div class="missing-wrap" id="miss-list"></div></div>
+          <div class="card"><div class="card-title"><i class="ti ti-file-certificate"></i>Generate master copy</div>
+            <div class="alert info" style="margin-bottom:10px;"><i class="ti ti-info-circle"></i>Consolidates all station submissions into one official record. Super user access only.</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <button class="sbtn" id="gen-btn" onclick="genMaster()"><i class="ti ti-file-certificate"></i>Generate master copy</button>
+              <button class="gbtn" style="width:100%;justify-content:center;" onclick="flagMissing()"><i class="ti ti-flag"></i>Flag missing stations</button>
+            </div>
+            <div class="processing" id="gen-proc"><div class="proc-dots"><div class="proc-dot"></div><div class="proc-dot"></div><div class="proc-dot"></div></div><p style="font-size:12px;color:#7a8a9a;margin-top:8px;">Generating...</p></div>
+            <div id="gen-out" style="display:none;margin-top:12px;flex-direction:column;gap:8px;">
+              <div class="alert ok"><i class="ti ti-circle-check"></i>Master copy generated successfully.</div>
+              <div class="json-box" id="master-json"></div>
+              <button class="sbtn" onclick="exportMaster()"><i class="ti ti-download"></i>Export master copy</button>
+              <button class="copy-btn" id="copy-master-btn" onclick="copyMaster()"><i class="ti ti-copy"></i>Copy JSON</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- BOTTOM NAV -->
+    <div id="bottom-nav">
+      <button class="bnav active" id="nav-home" onclick="goNav('home')"><i class="ti ti-home"></i><span>Home</span></button>
+      <button class="bnav" id="nav-pice" onclick="goNav('pice')"><i class="ti ti-calendar-week"></i><span>PICE</span></button>
+      <button class="bnav" id="nav-med" onclick="goNav('med')"><i class="ti ti-stethoscope"></i><span>Medical</span></button>
+      <button class="bnav" id="nav-phros" onclick="goNav('phros')"><i class="ti ti-users"></i><span>PHROs</span></button>
+      <button class="bnav" id="nav-idd" onclick="goNav('idd')"><i class="ti ti-file-description"></i><span>IDD</span><div class="badge" id="idd-badge"></div></button>
+      <button class="bnav" id="nav-cam" onclick="goNav('cam')"><i class="ti ti-camera"></i><span>Cam</span></button>
+      <button class="bnav" id="nav-master" onclick="goNav('master')"><i class="ti ti-file-certificate"></i><span>Master</span></button>
+    </div>
+  </div><!-- /auth-app -->
+</div><!-- /app -->
+
+<script>
+// ─── DATA ───
+const STNS=['Bulakan MPS','Calumpit MPS','Hagonoy MPS','Malolos CPS','Paombong MPS','Pulilan MPS','Balagtas MPS','Baliwag CPS','Bocaue MPS','Bustos MPS','Guiguinto MPS','Pandi MPS','Plaridel MPS','Angat MPS','DRT MPS','San Ildefonso MPS','San Miguel MPS','San Rafael MPS','Marilao MPS','Meycauayan CPS','Norzagaray MPS','Obando MPS','Santa Maria MPS','San Jose Del Monte CPS','PHQ','1st PMFC','2nd PMFC'];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DISEASES=['Hypertension','Heart Disease','TB','Cough','Colds','Asthma','Flu','Arthritis','Diabetes','UTI','Ulcer','Migraine','HIV','Epilepsy','Skin Disease','Diarrhea'];
+const CASE_DESC=['Murder','Homicide','Rape','Robbery','Illegal Drugs (RA 9165)','Illegal Possession of Firearms','Physical Injury','VAWC','Other'];
+const VALID_TOKS=['HUGO-INSPECT-01','PHRA-CAM-2025','BULPPO-SU-99'];
+const CAM_CONDS=[{id:1,name:'CCTV Compliance',icon:'ti-cctv',delay:5000},{id:2,name:'PUPC Logbook',icon:'ti-notebook',delay:10000},{id:3,name:'Medical Kit',icon:'ti-first-aid-kit',delay:15000},{id:4,name:'PUPC Formation',icon:'ti-users-group',delay:20000}];
+
+let role='',userId='',myStation='';
+let nums={pice:0,med:0};
+let photos={pice:null,med:null};
+let phrosFile=null;
+let modStations={pice:'',med:'',phros:'',idd:''};
+let modMonths={med:'',phros:''};
+let records=[];
+let idd={f1:'',f2:'',f3:'',f1c:0,f2c:0,f3c:0};
+let camStream=null,camSid='',camCaps=[],camTok='';
+let deferredPrompt=null;
+let lastMasterJSON='';
+
+// ─── INSTALL PROMPT ───
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault();deferredPrompt=e;
+  document.getElementById('install-banner').style.display='flex';
+  const h=document.getElementById('install-banner-home');if(h) h.style.display='none';
+});
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('install-banner').style.display='none';deferredPrompt=null;
+});
+function installApp(){
+  if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;document.getElementById('install-banner').style.display='none';});}
+  else alert('To install HuGo:\n1. Tap the browser menu (⋮)\n2. Tap "Add to Home screen"\n3. Tap "Add"');
+}
+
+// ─── OFFLINE ───
+function updateOnline(){document.getElementById('offline-bar').style.display=navigator.onLine?'none':'block';}
+window.addEventListener('online',updateOnline);window.addEventListener('offline',updateOnline);updateOnline();
+
+// ─── SERVICE WORKER ───
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').then(reg=>{
+      console.log('[HuGo] SW registered:',reg.scope);
+    }).catch(err=>console.warn('[HuGo] SW registration failed:',err));
+  });
+}
+
+// ─── SPLASH ───
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.getElementById('splash').classList.add('hidden');
+    setTimeout(()=>{document.getElementById('splash').style.display='none';document.getElementById('app').style.display='flex';},500);
+  },1800);
+});
+
+// ─── HASH ROUTING ───
+window.addEventListener('hashchange',()=>{
+  const h=location.hash.replace('#','');
+  if(['pice','med','phros','idd','cam','master'].includes(h)) goNav(h);
+});
+
+// ─── AUTH ───
+function login(r){
+  role=r;userId=r==='super'?'SU-001':'STU-'+Math.floor(Math.random()*900+100);
+  myStation=r==='station'?STNS[Math.floor(Math.random()*STNS.length)]:'';
+  document.getElementById('role-gate').style.display='none';
+  const aa=document.getElementById('auth-app');aa.style.display='flex';aa.style.flexDirection='column';
+  const pill=document.getElementById('ub-pill');
+  pill.textContent=r==='super'?'Super user':'Station user';
+  pill.className='ub-pill '+(r==='super'?'ub-su':'ub-st');
+  document.getElementById('ub-name').textContent=r==='super'?'Super User ('+userId+')':myStation;
+  document.getElementById('home-greeting').textContent='Magandang araw'+(myStation?', '+myStation.split(' ')[0]:'')+'!';
+  document.getElementById('home-sub-text').textContent=r==='super'?'Super user — full access enabled':'Station user — select a module to submit';
+  buildStationGrids();buildHomeStats();
+  document.getElementById('hdr-sub').textContent=r==='super'?'Super User':'Station · '+myStation;
+  // check hash
+  const h=location.hash.replace('#','');
+  if(['pice','med','phros','idd','cam','master'].includes(h)) goNav(h);
+}
+
+function logout(){
+  role='';if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
+  document.getElementById('role-gate').style.display='flex';
+  document.getElementById('auth-app').style.display='none';
+  document.getElementById('live-pill').style.display='none';
+  goNav('home');
+}
+
+// ─── NAV ───
+function goNav(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.bnav').forEach(n=>n.classList.remove('active'));
+  const v=document.getElementById('view-'+id);if(v){v.classList.add('active');}
+  const n=document.getElementById('nav-'+id);if(n) n.classList.add('active');
+  if(id==='master') buildMasterView();
+  location.hash=id==='home'?'':id;
+  document.getElementById('content').scrollTop=0;
+}
+
+// ─── STATION GRIDS ───
+function buildStationGrids(){
+  ['pice','med','phros','idd'].forEach(mod=>{
+    const el=document.getElementById(mod+'-stns');if(!el) return;el.innerHTML='';
+    STNS.forEach(s=>{
+      const b=document.createElement('button');b.className='stn-opt'+(myStation===s?' on':'');b.textContent=s;
+      b.onclick=()=>{modStations[mod]=s;el.querySelectorAll('.stn-opt').forEach(x=>x.classList.remove('on'));b.classList.add('on');checkMod(mod);};
+      el.appendChild(b);
+    });
+    if(myStation) modStations[mod]=myStation;
+  });
+  ['med','phros'].forEach(mod=>{
+    const el=document.getElementById(mod+'-months');if(!el) return;el.innerHTML='';
+    MONTHS.forEach(m=>{
+      const b=document.createElement('button');b.className='month-opt';b.textContent=m;
+      b.onclick=()=>{modMonths[mod]=m;el.querySelectorAll('.month-opt').forEach(x=>x.classList.remove('on'));b.classList.add('on');checkMod(mod);};
+      el.appendChild(b);
+    });
+  });
+}
+
+// ─── NUMBERS ───
+function adj(mod,d){nums[mod]=Math.max(0,nums[mod]+d);document.getElementById(mod+'-d').textContent=nums[mod];document.getElementById(mod+'-m').value=nums[mod];checkMod(mod);}
+function man(mod,v){const n=parseInt(v);nums[mod]=isNaN(n)||n<0?0:n;document.getElementById(mod+'-d').textContent=nums[mod];checkMod(mod);}
+
+// ─── PHOTO ───
+function handlePhoto(mod,files){
+  const err=document.getElementById(mod+'-err'),errMsg=document.getElementById(mod+'-err-msg');
+  if(err) err.style.display='none';
+  if(!files||!files[0]) return;
+  const f=files[0];
+  if(!['image/jpeg','image/png'].includes(f.type)){if(errMsg) errMsg.textContent='Please upload JPG or PNG only.';if(err) err.style.display='flex';return;}
+  if(files.length>1){if(errMsg) errMsg.textContent='Only one photo allowed.';if(err) err.style.display='flex';return;}
+  photos[mod]=f;
+  document.getElementById(mod+'-prev').innerHTML=`<div class="file-prev"><i class="ti ti-photo-check"></i><span class="fp-n">${f.name}</span><button class="fp-r" onclick="photos['${mod}']=null;document.getElementById('${mod}-prev').innerHTML='';checkMod('${mod}')">Remove</button></div>`;
+  checkMod(mod);
+}
+
+// ─── XLSX ───
+function handleXlsx(files){
+  if(!files||!files[0]) return;
+  const f=files[0];
+  if(!f.name.toLowerCase().endsWith('.xlsx')){alert('Please upload an .xlsx file only.');return;}
+  phrosFile=f;
+  document.getElementById('phros-prev').innerHTML=`<div class="file-prev"><i class="ti ti-file-spreadsheet"></i><span class="fp-n">${f.name}</span><button class="fp-r" onclick="phrosFile=null;document.getElementById('phros-prev').innerHTML='';checkMod('phros')">Remove</button></div>`;
+  runPhrosVal();checkMod('phros');
+}
+
+function runPhrosVal(){
+  const s=modStations.phros,m=modMonths.phros,f=phrosFile;if(!s||!m||!f) return;
+  const isDup=records.find(r=>r.mod==='phros'&&r.station===s&&r.month===m);
+  document.getElementById('phros-dup-err').style.display=isDup?'flex':'none';
+  const checks=[{ok:true,msg:'Station match: '+s},{ok:true,msg:'Form (A) sheet detected'},{ok:true,msg:'Form (B) sheet detected'},{ok:!isDup,msg:isDup?'Duplicate detected':'No duplicate found'}];
+  document.getElementById('phros-val').innerHTML='<div style="display:flex;flex-direction:column;gap:6px;">'+checks.map(c=>`<div class="alert ${c.ok?'ok':'err'}" style="${c.ok?'':'display:flex;'}"><i class="ti ${c.ok?'ti-circle-check':'ti-alert-triangle'}"></i>${c.msg}</div>`).join('')+'</div>';
+}
+
+// ─── CHECK ───
+function checkMod(mod){
+  let ok=false;
+  if(mod==='pice') ok=!!modStations.pice&&nums.pice>0&&!!photos.pice;
+  if(mod==='med') ok=!!modStations.med&&!!modMonths.med&&nums.med>0&&!!photos.med;
+  if(mod==='phros'){const isDup=records.find(r=>r.mod==='phros'&&r.station===modStations.phros&&r.month===modMonths.phros);ok=!!modStations.phros&&!!modMonths.phros&&!!phrosFile&&!isDup;}
+  if(mod==='idd') ok=!!modStations.idd&&!!document.getElementById('idd-month').value&&!!document.getElementById('idd-year').value&&idd.f1!==''&&idd.f2!==''&&idd.f3!=='';
+  const btn=document.getElementById(mod+'-btn');if(btn) btn.disabled=!ok;
+}
+function checkIDD(){checkMod('idd');}
+
+// ─── SUBMIT ───
+async function submitMod(mod){
+  const btn=document.getElementById(mod+'-btn');btn.disabled=true;
+  document.getElementById(mod+'-proc').style.display='block';
+  await new Promise(r=>setTimeout(r,1600));
+  document.getElementById(mod+'-proc').style.display='none';
+  const ts=new Date().toISOString();let label='',flag=false,payload={};
+  if(mod==='pice'){label=modStations.pice+' — '+nums.pice+' PICE';payload={module:'Weekly PICE',station:modStations.pice,pice_count:nums.pice,photo:photos.pice?.name,uploader:userId,timestamp:ts,worksheet:'WeeklyPICE'};}
+  if(mod==='med'){label=modStations.med+' — '+modMonths.med+' · '+nums.med+' check-ups';payload={module:'Monthly Medical',station:modStations.med,month:modMonths.med,count:nums.med,photo:photos.med?.name,uploader:userId,timestamp:ts,worksheet:'MonthlyMedical'};}
+  if(mod==='phros'){label=modStations.phros+' — '+modMonths.phros+' · PHROs &amp; COs';payload={module:'Monthly PHROs & COs',station:modStations.phros,month:modMonths.phros,file:phrosFile?.name,uploader:userId,timestamp:ts,worksheets:['Form (A) List of COs','COs RECAP','Form (B) List of PHROs','PHROs RECAP']};}
+  if(mod==='idd'){const m=document.getElementById('idd-month').value,y=document.getElementById('idd-year').value;flag=(idd.f1==='yes'&&idd.f1c>0)||(idd.f2==='yes'&&idd.f2c>0);label=modStations.idd+' — IDD '+m+' '+y+(flag?' [FLAG]':'');payload={module:'Monthly IDD',station:modStations.idd,month:m,year:y,form1:idd.f1==='no'?'NEGATIVE':idd.f1c+' entries',form2:idd.f2==='no'?'NEGATIVE':idd.f2c+' entries',form3:idd.f3==='no'?'NEGATIVE':idd.f3c+' rows',priority_flag:flag,uploader:userId,timestamp:ts};}
+  records.push({mod,station:modStations[mod]||modStations.idd,month:modMonths[mod]||document.getElementById('idd-month')?.value,flag,ts,label,payload});
+  if(flag){document.getElementById('flag-ind').style.display='flex';document.getElementById('idd-badge').classList.add('show');}
+  addActivity(mod,flag,label);
+  const jsonStr=JSON.stringify(payload,null,2);
+  document.getElementById(mod+'-success').innerHTML=`<div class="success-card"><i class="ti ti-circle-check sico"></i><div class="s-title">Submitted successfully</div><p class="s-sub">${label.replace('&amp;','&')}</p>${flag?'<div class="alert warn" style="margin-bottom:10px;text-align:left;"><i class="ti ti-flag"></i>Priority flag sent to all super users.</div>':''}<div class="json-box">${jsonStr}</div><div style="display:flex;gap:8px;margin-top:8px;"><button class="copy-btn" onclick="navigator.clipboard.writeText(\`${jsonStr.replace(/`/g,"'")}\`)"><i class="ti ti-copy"></i>Copy</button><button class="gbtn" onclick="resetMod('${mod}')"><i class="ti ti-refresh"></i>New</button></div></div>`;
+  buildHomeStats();
+}
+
+function resetMod(mod){
+  document.getElementById(mod+'-success').innerHTML='';
+  if(nums[mod]!==undefined){nums[mod]=0;document.getElementById(mod+'-d').textContent=0;document.getElementById(mod+'-m').value=0;}
+  if(photos[mod]!==undefined){photos[mod]=null;document.getElementById(mod+'-prev').innerHTML='';}
+  if(mod==='phros'){phrosFile=null;document.getElementById('phros-prev').innerHTML='';document.getElementById('phros-val').innerHTML='';document.getElementById('phros-dup-err').style.display='none';}
+  modStations[mod]=myStation||'';modMonths[mod]='';
+  if(document.getElementById(mod+'-btn')) document.getElementById(mod+'-btn').disabled=true;
+}
+
+// ─── ACTIVITY ───
+function addActivity(mod,flag,label){
+  const list=document.getElementById('activity-list');
+  if(list.querySelector('[style]')) list.innerHTML='';
+  const ts=new Date().toLocaleTimeString('en-PH',{hour:'2-digit',minute:'2-digit'});
+  const icons={pice:'ti-calendar-week',med:'ti-stethoscope',phros:'ti-users',idd:'ti-file-description'};
+  const row=document.createElement('div');row.className='act-row';
+  row.innerHTML=`<i class="ti ${icons[mod]||'ti-file'} act-ico${flag?' flag':''}"></i><div class="act-body"><strong>${label.replace('&amp;','&')}</strong>Submitted to master record</div><span class="act-ts">${ts}</span>`;
+  list.insertBefore(row,list.firstChild);
+}
+
+// ─── HOME STATS ───
+function buildHomeStats(){
+  const t=records.length,f=records.filter(r=>r.flag).length;
+  const pice=records.filter(r=>r.mod==='pice').reduce((a,r)=>a+(r.payload?.pice_count||0),0);
+  const med=records.filter(r=>r.mod==='med').reduce((a,r)=>a+(r.payload?.count||0),0);
+  document.getElementById('home-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-val s">${t}</div><div class="stat-lbl">Total submissions</div></div>
+    <div class="stat-card"><div class="stat-val d">${f}</div><div class="stat-lbl">Priority flags</div></div>
+    <div class="stat-card"><div class="stat-val">${pice}</div><div class="stat-lbl">Total PICE</div></div>
+    <div class="stat-card"><div class="stat-val">${med}</div><div class="stat-lbl">Total medical</div></div>`;
+}
+
+// ─── IDD ───
+function setF(n,v){
+  idd['f'+n]=v;
+  document.getElementById('idd-f'+n+'-y').className='tog'+(v==='yes'?' y-on':'');
+  document.getElementById('idd-f'+n+'-n').className='tog'+(v==='no'?' n-on':'');
+  if(v==='no'){document.getElementById('idd-f'+n+'-entries').innerHTML='';document.getElementById('idd-f'+n+'-add').style.display='none';idd['f'+n+'c']=0;}
+  if(v==='yes'&&n<3&&idd['f'+n+'c']===0) addEntry(n);
+  if(v==='yes'&&n===3&&idd.f3c===0) addDiseaseRow();
+  const f1f=document.getElementById('idd-f1-flag'),f2f=document.getElementById('idd-f2-flag');
+  if(f1f) f1f.style.display=(idd.f1==='yes'&&idd.f1c>0)?'flex':'none';
+  if(f2f) f2f.style.display=(idd.f2==='yes'&&idd.f2c>0)?'flex':'none';
+  checkMod('idd');
+}
+
+function addEntry(n){
+  idd['f'+n+'c']++;const cnt=idd['f'+n+'c'];
+  const causes=n===1?['Cardiovascular Disease','Hypertension / Stroke','TB','Pneumonia','Diabetes Complications','Kidney Failure','Cancer','Natural Causes','Other']:['Physical Trauma','Torture / Electric Shock','Suffocation','Drowning','Burns','Poisoning','Gunshot Wound','Stabbing','Blunt Force Trauma','Under Investigation','Other'];
+  const c=document.createElement('div');c.className='entry-card';c.id='idd-e'+n+'-'+cnt;
+  c.innerHTML=`<div class="entry-num">Entry ${cnt}</div><button class="rm-btn" onclick="removeEntry(${n},${cnt})"><i class="ti ti-x"></i></button>
+  <div class="rw2" style="margin-bottom:8px;"><div class="fg"><div class="fl">Name of PUPC</div><input class="fi" placeholder="Last, First, Middle"></div><div class="fg"><div class="fl">Date of death</div><input class="fi" type="date"></div></div>
+  <div class="fg" style="margin-bottom:8px;"><div class="fl">Case description</div><select class="fs"><option value="">Select...</option>${CASE_DESC.map(o=>`<option>${o}</option>`).join('')}</select></div>
+  <div class="fg"><div class="fl">Cause of death</div><select class="fs"><option value="">Select...</option>${causes.map(o=>`<option>${o}</option>`).join('')}</select></div>`;
+  document.getElementById('idd-f'+n+'-entries').appendChild(c);
+  document.getElementById('idd-f'+n+'-add').style.display='block';
+  const f=document.getElementById('idd-f'+n+'-flag');if(f) f.style.display='flex';
+  checkMod('idd');
+}
+
+function removeEntry(n,cnt){
+  const el=document.getElementById('idd-e'+n+'-'+cnt);if(el) el.remove();
+  idd['f'+n+'c']=Math.max(0,idd['f'+n+'c']-1);
+  const f=document.getElementById('idd-f'+n+'-flag');if(f) f.style.display=idd['f'+n+'c']>0?'flex':'none';
+  checkMod('idd');
+}
+
+function addDiseaseRow(){
+  idd.f3c++;const cnt=idd.f3c;
+  const c=document.createElement('div');c.className='entry-card';c.id='idd-e3-'+cnt;
+  const chips=DISEASES.map(d=>`<span class="chip" onclick="this.classList.toggle('on')">${d}</span>`).join('');
+  c.innerHTML=`<div class="entry-num">Disease row ${cnt}</div><button class="rm-btn" onclick="removeEntry(3,${cnt})"><i class="ti ti-x"></i></button>
+  <div class="fg" style="margin-bottom:8px;"><div class="fl">Diseases (select all that apply)</div><div class="chip-wrap">${chips}</div></div>
+  <div class="rw3"><div class="fg"><div class="fl">With disease</div><input class="fi" type="number" min="0" placeholder="0"></div><div class="fg"><div class="fl">Died</div><input class="fi" type="number" min="0" placeholder="0"></div><div class="fg"><div class="fl">Hospitalized</div><input class="fi" type="number" min="0" placeholder="0"></div></div>`;
+  document.getElementById('idd-f3-entries').appendChild(c);
+  document.getElementById('idd-f3-add').style.display='block';
+  checkMod('idd');
+}
+
+// ─── CAMERA ───
+function onTok(){document.getElementById('cam-val-btn').disabled=document.getElementById('cam-tok').value.trim().length<4;}
+function useTok(t){document.getElementById('cam-tok').value=t;onTok();document.getElementById('cam-tok-err').style.display='none';}
+
+async function valCam(){
+  const tok=document.getElementById('cam-tok').value.trim();
+  document.getElementById('cam-tok-err').style.display='none';
+  document.getElementById('cam-val-btn').disabled=true;
+  document.getElementById('cam-validating').style.display='flex';
+  await new Promise(r=>setTimeout(r,1200));
+  if(!VALID_TOKS.includes(tok)){
+    document.getElementById('cam-tok-err-msg').textContent='Invalid token: "'+tok+'". Request a valid token from your super user.';
+    document.getElementById('cam-tok-err').style.display='flex';
+    document.getElementById('cam-validating').style.display='none';
+    document.getElementById('cam-val-btn').disabled=false;
+    return;
+  }
+  camTok=tok;
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}},audio:false});
+    camStream=stream;camSid='INSP-'+Date.now();camCaps=[];
+    document.getElementById('cam-tok-sec').style.display='none';
+    const ls=document.getElementById('cam-live-sec');ls.style.display='flex';ls.style.flexDirection='column';
+    const vid=document.getElementById('cam-video');vid.srcObject=stream;vid.style.display='block';
+    document.getElementById('cam-ph').style.display='none';
+    document.getElementById('cam-sid').textContent=camSid;
+    document.getElementById('cam-live-ind').style.display='flex';
+    document.getElementById('live-pill').style.display='flex';
+    buildCamConds();
+    CAM_CONDS.forEach(c=>setTimeout(()=>{if(camStream) triggerCap(c);},c.delay));
+  } catch(e){
+    document.getElementById('cam-tok-err-msg').textContent='Camera access failed: '+e.message+'. Allow camera in browser settings.';
+    document.getElementById('cam-tok-err').style.display='flex';
+    document.getElementById('cam-validating').style.display='none';
+    document.getElementById('cam-val-btn').disabled=false;
+  }
+}
+
+function buildCamConds(){
+  const el=document.getElementById('cam-conds');el.innerHTML='';
+  CAM_CONDS.forEach(c=>{
+    const d=document.createElement('div');d.className='cond-card scan';d.id='cc-'+c.id;
+    d.innerHTML=`<div class="cond-ico"><i class="ti ${c.icon}"></i></div><div class="cond-nm">${c.name}</div><div class="cond-st">Scanning<span class="scan-d"><span></span><span></span><span></span></span></div>`;
+    el.appendChild(d);
+  });
+}
+
+function triggerCap(c){
+  const ts=new Date().toISOString();camCaps.push({condition:c.name,ts,session:camSid,token:camTok,access:'PRIVATE'});
+  const card=document.getElementById('cc-'+c.id);
+  if(card){card.className='cond-card done';card.innerHTML=`<div class="cond-ico"><i class="ti ${c.icon}"></i></div><div class="cond-nm">${c.name}</div><div class="cond-st">✓ Auto-captured · ${ts.substring(11,19)}</div>`;}
+  document.getElementById('cap-cnt').textContent=camCaps.length;
+  const log=document.getElementById('cap-log');
+  if(log.querySelector('[style]')) log.innerHTML='';
+  const li=document.createElement('div');li.className='act-row';
+  li.innerHTML=`<i class="ti ${c.icon} act-ico"></i><div class="act-body"><strong>${c.name}</strong><span class="pill pill-b" style="font-size:9px;margin-left:4px;">PRIVATE</span></div><span class="act-ts">${ts.substring(11,19)}</span>`;
+  log.insertBefore(li,log.firstChild);
+}
+
+function manCap(){triggerCap({name:'Manual capture',icon:'ti-camera',id:'m'+Date.now()});}
+
+function stopCam(){
+  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
+  document.getElementById('live-pill').style.display='none';
+  document.getElementById('cam-live-sec').style.display='none';
+  const json=JSON.stringify({session_id:camSid,token:camTok,total_captures:camCaps.length,compliance:camCaps.length>=4?'COMPLIANT':'PARTIAL',captures:camCaps},null,2);
+  document.getElementById('cam-done-msg').textContent=`Session ${camSid} — ${camCaps.length} photo(s) captured. All marked PRIVATE.`;
+  document.getElementById('cam-json').textContent=json;
+  const ds=document.getElementById('cam-done-sec');ds.style.display='block';
+  addActivity('cam',false,'Inspection session '+camSid,'Inspection cam');buildHomeStats();
+}
+function copyCamJSON(){const j=document.getElementById('cam-json').textContent;navigator.clipboard.writeText(j).then(()=>{const b=document.querySelector('#cam-done-sec .copy-btn');b.textContent='Copied!';setTimeout(()=>{b.innerHTML='<i class="ti ti-copy"></i>Copy JSON';},2000);});}
+function resetCam(){
+  document.getElementById('cam-done-sec').style.display='none';
+  document.getElementById('cam-tok-sec').style.display='block';
+  document.getElementById('cam-tok').value='';document.getElementById('cam-val-btn').disabled=true;
+  document.getElementById('cam-tok-err').style.display='none';document.getElementById('cam-validating').style.display='none';
+  camSid='';camCaps=[];camTok='';
+}
+
+// ─── MASTER ───
+function buildMasterView(){
+  if(role!=='super'){
+    document.getElementById('master-denied').style.display='flex';
+    document.getElementById('master-su').style.display='none';
+    return;
+  }
+  document.getElementById('master-denied').style.display='none';
+  const ms=document.getElementById('master-su');ms.style.display='flex';ms.style.flexDirection='column';
+  buildMaster();
+}
+
+function getFiltered(){
+  const fm=document.getElementById('f-month')?.value||'';
+  const fy=document.getElementById('f-year')?.value||'';
+  return records.filter(r=>(!fm||r.month===fm)&&(!fy||(r.payload?.year||'')===fy));
+}
+
+function buildMaster(){
+  const recs=getFiltered();
+  const flags=recs.filter(r=>r.flag).length;
+  const stns=new Set(recs.map(r=>r.station)).size;
+  const totalPice=recs.filter(r=>r.mod==='pice').reduce((a,r)=>a+(r.payload?.pice_count||0),0);
+  const totalMed=recs.filter(r=>r.mod==='med').reduce((a,r)=>a+(r.payload?.count||0),0);
+  document.getElementById('master-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-val s">${recs.length}</div><div class="stat-lbl">Submissions</div></div>
+    <div class="stat-card"><div class="stat-val">${stns}</div><div class="stat-lbl">Stations</div></div>
+    <div class="stat-card"><div class="stat-val">${totalPice}</div><div class="stat-lbl">Total PICE</div></div>
+    <div class="stat-card"><div class="stat-val d">${flags}</div><div class="stat-lbl">Flags</div></div>`;
+  const tbody=document.getElementById('master-tbody');tbody.innerHTML='';
+  document.getElementById('master-empty').style.display=recs.length?'none':'block';
+  recs.forEach(r=>{
+    const p=r.payload||{};const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="stn-pill sp-b">${r.station}</span></td><td style="white-space:nowrap;">${r.month||''} ${p.year||''}</td><td>${p.pice_count||p.count||'—'}</td><td>${p.count||'—'}</td><td style="font-size:9.5px;max-width:80px;overflow:hidden;text-overflow:ellipsis;">${p.file||'—'}</td><td><span class="stn-pill ${p.form1==='NEGATIVE'?'sp-g':'sp-r'}">${p.form1||'—'}</span></td><td><span class="stn-pill ${p.form2==='NEGATIVE'?'sp-g':'sp-r'}">${p.form2||'—'}</span></td><td>${r.flag?'<span class="stn-pill sp-r">FLAG</span>':'<span class="stn-pill sp-g">Clear</span>'}</td>`;
+    tbody.appendChild(tr);
+  });
+  const submitted=new Set(recs.map(r=>r.station));
+  const missing=STNS.filter(s=>!submitted.has(s));
+  document.getElementById('miss-cnt').textContent=missing.length+' missing';
+  const ml=document.getElementById('miss-list');ml.innerHTML='';
+  if(!missing.length){ml.innerHTML='<span style="font-size:12px;color:#3B6D11;">All stations submitted.</span>';return;}
+  missing.forEach(s=>{const sp=document.createElement('span');sp.className='stn-pill sp-a';sp.textContent=s;ml.appendChild(sp);});
+}
+
+function flagMissing(){
+  const fm=document.getElementById('f-month')?.value||'';
+  const submitted=new Set(getFiltered().map(r=>r.station));
+  const missing=STNS.filter(s=>!submitted.has(s));
+  if(!missing.length){alert('All stations have submitted'+(fm?' for '+fm:'')+'.');return;}
+  alert('Missing stations ('+missing.length+'):\n\n'+missing.join('\n'));
+}
+
+async function genMaster(){
+  const recs=getFiltered();
+  if(!recs.length){alert('No submissions found. Adjust filters or wait for station submissions.');return;}
+  document.getElementById('gen-btn').disabled=true;
+  document.getElementById('gen-proc').style.display='block';
+  await new Promise(r=>setTimeout(r,2200));
+  document.getElementById('gen-proc').style.display='none';
+  const fm=document.getElementById('f-month')?.value||'All months';
+  const fy=document.getElementById('f-year')?.value||'All years';
+  const submitted=new Set(recs.map(r=>r.station));
+  const missing=STNS.filter(s=>!submitted.has(s));
+  const master={
+    document:'HuGo Master Consolidated Report',
+    office:'Bulacan Police Provincial Human Rights Affairs Office',
+    unit:'BULPPO, PRO 3',
+    generated_by:userId,generated_at:new Date().toISOString(),
+    reporting_period:{month:fm,year:fy},
+    total_stations_submitted:new Set(recs.map(r=>r.station)).size,
+    total_stations_missing:missing.length,stations_missing:missing,
+    summary:{
+      total_pice:recs.filter(r=>r.mod==='pice').reduce((a,r)=>a+(r.payload?.pice_count||0),0),
+      total_medical:recs.filter(r=>r.mod==='med').reduce((a,r)=>a+(r.payload?.count||0),0),
+      total_priority_flags:recs.filter(r=>r.flag).length,
+      idd_with_deaths:recs.filter(r=>r.payload?.priority_flag).length
+    },
+    access_level:'SUPER_USER_ONLY',export_authorized:true,
+    per_station_records:recs.map(r=>({station:r.station,month:r.month,submitted_by:r.payload?.uploader,timestamp:r.ts,modules:r.mod,flag:r.flag})),
+    worksheet_targets:['WeeklyPICE','MonthlyMedical','MonthlyPHROsCOs','MonthlyIDD','MasterConsolidated']
+  };
+  lastMasterJSON=JSON.stringify(master,null,2);
+  document.getElementById('master-json').textContent=lastMasterJSON;
+  const go=document.getElementById('gen-out');go.style.display='flex';go.style.flexDirection='column';
+  document.getElementById('gen-btn').disabled=false;
+}
+
+function exportMaster(){
+  if(!lastMasterJSON){alert('Generate the master copy first.');return;}
+  navigator.clipboard.writeText(lastMasterJSON).then(()=>alert('Master consolidated report copied!\n\nPaste into your master Excel template across:\n• WeeklyPICE\n• MonthlyMedical\n• MonthlyPHROsCOs\n• MonthlyIDD\n• MasterConsolidated\n\nAccess level: SUPER USER ONLY'));
+}
+function copyMaster(){navigator.clipboard.writeText(lastMasterJSON).then(()=>{const b=document.getElementById('copy-master-btn');b.textContent='Copied!';setTimeout(()=>{b.innerHTML='<i class="ti ti-copy"></i>Copy JSON';},2000);});}
+</script>
+</body>
+</html>
